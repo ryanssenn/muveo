@@ -3,6 +3,7 @@ import re
 import json
 from dataclasses import dataclass
 from typing import Optional
+import urllib.request
 
 @dataclass
 class SunoSong:
@@ -49,6 +50,10 @@ def get_suno_song(url: str) -> Optional[SunoSong]:
 
     return None
 
-song = get_suno_song("https://suno.com/song/27934a61-5d0b-48fc-a8b3-a3b3b2771c7a")
-
-print(song)
+def download_audio(song: SunoSong, filename="input.mp3"):
+    if song and song.audio_url:
+        print(f"Downloading {song.audio_url}...")
+        urllib.request.urlretrieve(song.audio_url, filename)
+        print(f"Saved to {filename}")
+    else:
+        print("No audio URL found.")
