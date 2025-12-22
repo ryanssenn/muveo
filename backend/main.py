@@ -10,9 +10,12 @@ from video_gen import generate_mp4
 app = FastAPI()
 
 # Add CORS middleware
+# When behind NGINX, all requests come from the same origin, so CORS is less restrictive
+# For direct development access, localhost origins are allowed
+# For production behind NGINX, allow all origins since NGINX handles routing
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8080"],  # Next.js dev server
+    allow_origins=["*"],  # Allow all origins - NGINX handles security in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

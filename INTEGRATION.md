@@ -4,6 +4,7 @@ This document describes the integration between the Next.js frontend and FastAPI
 
 ## Architecture
 
+### Development (Direct Access)
 ```
 ┌─────────────────┐         HTTP/REST         ┌─────────────────┐
 │  Next.js        │  ──────────────────────> │  FastAPI        │
@@ -18,6 +19,36 @@ This document describes the integration between the Next.js frontend and FastAPI
                                          │  (stub)     │
                                          └─────────────┘
 ```
+
+### Production (NGINX Reverse Proxy)
+```
+┌─────────┐
+│ Browser │
+└────┬────┘
+     │
+     ▼
+┌─────────────────┐
+│  NGINX          │  (Port 80)
+│  Reverse Proxy  │
+└────┬────────┬───┘
+     │        │
+     │        └──────────────┐
+     │                       │
+     ▼                       ▼
+┌─────────────┐      ┌─────────────┐
+│  Next.js    │      │  FastAPI    │
+│  Frontend   │      │  Backend    │
+│  (3000)     │      │  (8000)     │
+└─────────────┘      └──────┬──────┘
+                            │
+                            ▼
+                      ┌─────────────┐
+                      │  Video Gen  │
+                      │  (stub)     │
+                      └─────────────┘
+```
+
+For production deployment with NGINX, see [DEPLOYMENT.md](../../DEPLOYMENT.md).
 
 ## API Endpoints
 
@@ -64,15 +95,20 @@ The frontend will be available at `http://localhost:3000`
 ## Environment Variables
 
 ### Frontend (.env.local)
+
+**For development (direct access):**
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
+**For production (behind NGINX):**
+No environment variable needed. The frontend uses relative URLs (`/api/backend`) which NGINX routes to the backend.
+
 ## CORS Configuration
 
-The backend includes CORS middleware to allow requests from:
-- `http://localhost:3000` (Next.js default)
-- `http://localhost:8080` (alternative port)
+The backend includes CORS middleware configured to allow all origins:
+- **Development**: Direct access from `http://localhost:3000` works
+- **Production**: When behind NGINX, all requests come from the same origin, so CORS is less restrictive. NGINX handles security and routing.
 
 ## Current Status
 
