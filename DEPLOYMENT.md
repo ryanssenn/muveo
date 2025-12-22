@@ -192,11 +192,97 @@ When ready to add HTTPS:
 
 ### Process Management
 
-For production, use systemd services or process managers:
+For production, use systemd services or process managers so your processes restart automatically on reboot or failure.
 
-- **systemd**: Create service files for both frontend and backend
-- **pm2**: For Node.js frontend: `pm2 start npm --name "muveo-frontend" -- start`
-- **supervisord**: For Python backend
+#### Option 1: systemd (recommended on Ubuntu/Debian)
+
+Create a dedicated user (optional but recommended):
+
+```bash
+sudo useradd -r -s /bin/false muveo
+sudo chown -R muveo:muveo /path/to/muveo
+```
+
+##### Backend service (`/etc/systemd/system/muveo-backend.service`)
+
+```ini
+[Unit]
+Description=Muveo Backend (FastAPI)
+After=network.target
+
+[Service]
+User=muveo
+WorkingDirectory=/path/to/muveo/backend
+Environment="PATH=/path/to/muveo/venv/bin"
+ExecStart=/path/to/muveo/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+##### Frontend service (`/etc/systemd/system/muveo-frontend.service`)
+
+```ini
+[Unit]
+Description=Muveo Frontend (Next.js)
+After=network.target
+
+[Service]
+User=muveo
+WorkingDirectory=/path/to/muveo/frontend
+Environment="NODE_ENV=production"
+ExecStart=/usr/bin/npm start -- -H 127.0.0.1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start both services:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable muveo-backend muveo-frontend
+sudo systemctl start muveo-backend muveo-frontend
+```
+
+Check status/logs:
+
+```bash
+sudo systemctl status muveo-backend muveo-frontend
+sudo journalctl -u muveo-backend -f
+sudo journalctl -u muveo-frontend -f
+```
+
+> Replace `/path/to/muveo` and `/usr/bin/npm` with the actual paths on your server.
+
+#### Option 2: pm2 (Node.js-only for frontend)
+
+Install pm2 globally:
+
+```bash
+sudo npm install -g pm2
+```
+
+Start the frontend in production mode:
+
+```bash
+cd /path/to/muveo/frontend
+npm run build
+pm2 start npm --name "muveo-frontend" -- start -- -H 127.0.0.1
+```
+
+Save the process list and configure pm2 to start on boot:
+
+```bash
+pm2 save
+pm2 startup
+```
+
+pm2 is only for the Node.js frontend; for the Python backend, use systemd or another Python-friendly process manager (e.g., `supervisord` or `gunicorn` with systemd).
 
 ### Security Hardening
 
