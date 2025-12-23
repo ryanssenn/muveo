@@ -131,29 +131,32 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Effects */}
+      {/* Background: warm gradient with subtle texture */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: "2s" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+        <div className="absolute -top-32 left-10 w-72 h-72 bg-amber-300/10 rounded-[40%] blur-3xl mix-blend-soft-light animate-float-soft" />
+        <div className="absolute -bottom-40 right-0 w-80 h-80 bg-rose-300/10 rounded-[45%] blur-3xl mix-blend-soft-light animate-float-soft" />
+        <div className="absolute inset-0 opacity-[0.14] mix-blend-soft-light hero-texture" />
       </div>
 
-      <div className="relative z-10 container max-w-2xl mx-auto py-4 px-4">
+      <div className="relative z-10 container max-w-2xl mx-auto py-8 px-4">
         {/* Header */}
-        <header className="text-center mb-4">
-          <div className="mb-2">
-            <span className="text-7xl md:text-8xl font-bold tracking-tight animated-blue-gradient">
+        <header className="mb-8 flex flex-col items-center text-center gap-3">
+          <div className="mb-1">
+            <span className="text-[3rem] md:text-[3.5rem] font-semibold tracking-tight brand-wordmark">
               muveo
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold mb-1">
-            Transform Sound Into<br />
-            <span className="gradient-text">Vision</span>
+          <h1 className="text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
+            Make it <span className="gradient-text">look</span> how it <span className="gradient-text">feels</span>
           </h1>
+          <p className="max-w-xl text-sm md:text-base text-muted-foreground">
+            Pick the moment that feels right and turn it into a video.
+          </p>
         </header>
 
         {/* Main Content */}
-        <main className="space-y-3">
+        <main className="space-y-4">
           <MediaInput
             onFileSelect={handleFileSelect}
             onUrlSubmit={handleSunoUrlSubmit}
@@ -182,7 +185,8 @@ export default function Home() {
         {/* Footer */}
         <footer className="mt-16 text-center">
           <p className="text-sm text-muted-foreground">
-            Upload an audio file or paste a Suno URL to get started
+            Upload an audio file or paste a Suno URL to begin.
+            We’ll handle the details so you can stay with the music.
           </p>
         </footer>
       </div>

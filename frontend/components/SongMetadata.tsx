@@ -17,7 +17,7 @@ export function SongMetadata({ metadata }: SongMetadataProps) {
   }
 
   return (
-    <div className="glass rounded-xl p-4">
+    <div className="glass rounded-2xl p-4 md:p-5">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between text-left group"
@@ -26,9 +26,9 @@ export function SongMetadata({ metadata }: SongMetadataProps) {
           <ClientIcon fallback={<div className="w-4 h-4" aria-hidden="true" />}>
             <Music className="w-4 h-4 text-primary" />
           </ClientIcon>
-          <span className="font-semibold text-foreground">Song Information</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary">
-            From Suno
+          <span className="font-semibold text-foreground tracking-tight">Song information</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/16 text-primary">
+            from Suno
           </span>
         </div>
         <ClientIcon fallback={<div className="w-4 h-4" aria-hidden="true" />}>
@@ -41,16 +41,16 @@ export function SongMetadata({ metadata }: SongMetadataProps) {
       </button>
 
       {isExpanded && (
-        <div className="mt-4 space-y-4 pt-4 border-t border-border/50">
+        <div className="mt-4 space-y-4 pt-4 border-t border-border/40">
           {metadata.description && (
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <ClientIcon fallback={<div className="w-4 h-4" aria-hidden="true" />}>
                   <FileText className="w-4 h-4 text-primary/70" />
                 </ClientIcon>
-                <h4 className="text-sm font-semibold text-foreground">Description</h4>
+                <h4 className="text-sm font-semibold text-foreground tracking-tight">Description</h4>
               </div>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                 {metadata.description}
               </p>
             </div>
@@ -62,7 +62,7 @@ export function SongMetadata({ metadata }: SongMetadataProps) {
                 <ClientIcon fallback={<div className="w-4 h-4" aria-hidden="true" />}>
                   <Tag className="w-4 h-4 text-primary/70" />
                 </ClientIcon>
-                <h4 className="text-sm font-semibold text-foreground">Tags</h4>
+                <h4 className="text-sm font-semibold text-foreground tracking-tight">Tags</h4>
               </div>
               <p className="text-sm text-muted-foreground">
                 {metadata.tags}
@@ -76,9 +76,9 @@ export function SongMetadata({ metadata }: SongMetadataProps) {
                 <ClientIcon fallback={<div className="w-4 h-4" aria-hidden="true" />}>
                   <Music className="w-4 h-4 text-primary/70" />
                 </ClientIcon>
-                <h4 className="text-sm font-semibold text-foreground">Lyrics</h4>
+                <h4 className="text-sm font-semibold text-foreground tracking-tight">Lyrics</h4>
               </div>
-              <div className="bg-background/50 rounded-lg p-3">
+              <div className="bg-background/60 rounded-xl p-3">
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap font-mono leading-relaxed">
                   {metadata.lyrics}
                 </p>

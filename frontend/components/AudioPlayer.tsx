@@ -107,7 +107,7 @@ export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGe
 
       {/* Waveform with integrated sliders */}
       {duration > 0 && (
-        <div className="glass rounded-xl p-6">
+        <div className="glass rounded-2xl p-5 md:p-6">
           <AudioWaveform
             audioUrl={audioUrl}
             startTime={startTime}
@@ -127,7 +127,7 @@ export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGe
           variant="secondary"
           size="icon"
           onClick={resetPlayback}
-          className="h-12 w-12 rounded-full"
+          className="h-11 w-11 rounded-full border-border/60 bg-secondary/70 hover:bg-secondary"
         >
           <RotateCcw className="h-5 w-5" />
         </Button>
@@ -136,7 +136,7 @@ export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGe
           variant="default"
           size="icon"
           onClick={togglePlay}
-          className="h-16 w-16 rounded-full glow-primary"
+          className="h-14 w-14 rounded-full bg-gradient-primary hover:opacity-95 transition-opacity glow-primary"
         >
           {isPlaying ? (
             <Pause className="h-7 w-7" />
@@ -152,7 +152,7 @@ export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGe
       {isGenerating && (
         <div className="text-center text-muted-foreground">
           <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-2" />
-          Generating video...
+          Generating your video…
         </div>
       )}
 
@@ -168,12 +168,12 @@ export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGe
           <Button
             onClick={() => onGenerate(startTime, endTime)}
             disabled={isGenerating || duration === 0}
-            className="flex-1 h-14 text-lg font-semibold rounded-xl bg-gradient-primary hover:opacity-90 transition-opacity glow-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 h-14 text-base md:text-lg font-semibold rounded-2xl bg-gradient-primary hover:opacity-95 transition-opacity glow-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isGenerating ? (
               <span className="flex items-center gap-3">
                 <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                Generating Video...
+                Generating video…
               </span>
             ) : (
               "Generate Video"
@@ -184,7 +184,7 @@ export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGe
         {isReady && onDownload && (
           <Button
             onClick={onDownload}
-            className="flex-1 h-14 text-lg font-semibold rounded-xl bg-gradient-primary hover:opacity-90 transition-opacity glow-primary"
+            className="flex-1 h-14 text-base md:text-lg font-semibold rounded-2xl bg-gradient-primary hover:opacity-95 transition-opacity glow-primary"
           >
             <Download className="mr-2 h-5 w-5" />
             Download Video

@@ -51,17 +51,17 @@ export function DropZone({ onFileSelect, hasFile, fileName }: DropZoneProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`
-        relative overflow-hidden rounded-2xl border-2 border-dashed 
+        relative overflow-hidden rounded-3xl border border-dashed
         transition-all duration-300 cursor-pointer group
         ${isDragOver 
-          ? "border-primary bg-primary/10 scale-[1.02]" 
+          ? "border-primary bg-primary/10 scale-[1.01]" 
           : hasFile 
-            ? "border-primary/50 bg-card" 
-            : "border-border hover:border-primary/50 hover:bg-card/50"
+            ? "border-primary/40 bg-card" 
+            : "border-border/70 bg-card/60 hover:border-primary/40 hover:bg-card/80"
         }
       `}
     >
-      <label className="flex flex-col items-center justify-center p-12 cursor-pointer">
+      <label className="flex flex-col items-center justify-center px-8 py-10 md:px-12 md:py-12 cursor-pointer">
         <input
           type="file"
           accept="audio/*"
@@ -69,20 +69,18 @@ export function DropZone({ onFileSelect, hasFile, fileName }: DropZoneProps) {
           className="hidden"
         />
         
-        {/* Animated background */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20" />
-          {isDragOver && (
-            <div className="absolute inset-0 animate-pulse bg-primary/10" />
-          )}
+        {/* Soft, organic background */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background/70 to-accent/10" />
+          <div className="absolute inset-4 rounded-[2rem] opacity-50 dropzone-texture" />
         </div>
 
         <div className="relative z-10 flex flex-col items-center gap-4">
           <div className={`
-            p-4 rounded-full transition-all duration-300
+            p-4 rounded-2xl transition-all duration-300 shadow-sm
             ${hasFile 
-              ? "bg-primary/20 text-primary" 
-              : "bg-muted text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary"
+              ? "bg-primary/18 text-primary"
+              : "bg-muted/80 text-muted-foreground group-hover:bg-primary/15 group-hover:text-primary"
             }
           `}>
             <ClientIcon fallback={<div className="w-8 h-8" aria-hidden="true" />}>
@@ -96,18 +94,18 @@ export function DropZone({ onFileSelect, hasFile, fileName }: DropZoneProps) {
           
           {hasFile ? (
             <div className="text-center">
-              <p className="text-foreground font-medium">{fileName}</p>
+              <p className="text-foreground font-medium tracking-tight">{fileName}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Click or drop to replace
+                Click or drop another moment to replace it
               </p>
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-foreground font-medium">
-                Drop your MP3 here
+              <p className="text-foreground font-medium tracking-tight">
+                Drop your song here
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                or click to browse
+                or click to browse from your library
               </p>
             </div>
           )}
