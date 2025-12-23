@@ -7,14 +7,15 @@ import { AudioWaveform } from "./AudioWaveform";
 import type { JobStatus } from "@/lib/api";
 
 interface AudioPlayerProps {
-  file: File;
+  file?: File;
+  audioUrl?: string;
   onGenerate: (startTime: number, endTime: number) => void;
   isGenerating: boolean;
   jobStatus?: JobStatus;
   onDownload?: () => void;
 }
 
-export function AudioPlayer({ file, onGenerate, isGenerating, jobStatus, onDownload }: AudioPlayerProps) {
+export function AudioPlayer({ file, audioUrl: externalAudioUrl, onGenerate, isGenerating, jobStatus, onDownload }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [duration, setDuration] = useState(0);
@@ -24,10 +25,14 @@ export function AudioPlayer({ file, onGenerate, isGenerating, jobStatus, onDownl
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    const url = URL.createObjectURL(file);
-    setAudioUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setAudioUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (externalAudioUrl) {
+      setAudioUrl(externalAudioUrl);
+    }
+  }, [file, externalAudioUrl]);
 
   const handleLoadedMetadata = useCallback(() => {
     if (audioRef.current) {

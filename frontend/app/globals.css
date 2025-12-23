@@ -73,6 +73,10 @@
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
 
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-accent;
+  }
+
   .animated-blue-gradient {
     background: linear-gradient(90deg, 
       hsl(190, 100%, 80%) 0%, 

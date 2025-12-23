@@ -1,7 +1,8 @@
 # Muveo
 
-Muveo is a full-stack app that turns audio into visuals, giving Suno artists a way to create visuals without manual editing.
+Muveo enables Suno artists to create visuals for their music
 
+in progress, hosted on https://23.94.136.239/
 
 # Roadmap
 
@@ -34,12 +35,14 @@ A
                         │
                         ▼
                  ┌──────────────┐
-                 │  Worker Job  │──┐
-                 └──────┬───────┘  │
-                        │          │ (Write)
-                        ▼          │
-                 ┌──────────────┐  │
-                 │  Local Disk  │◄─┘
+                 │  Worker Job  │
+                 └──────┬───────┘ 
+                        │  
+                     (Write)   
+                        |     
+                        ▼          
+                 ┌──────────────┐
+                 │  Local Disk  │
                  │  (/tmp/*.mp4)│
                  └──────────────┘
 

@@ -1,15 +1,21 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { DropZone } from "@/components/DropZone";
+import { MediaInput } from "@/components/MediaInput";
 import { AudioPlayer } from "@/components/AudioPlayer";
+import { SongMetadata as SongMetadataComponent } from "@/components/SongMetadata";
 import { toast } from "sonner";
-import { uploadAudio, getJobStatus, getDownloadUrl } from "@/lib/api";
+import { uploadAudio, getJobStatus, getDownloadUrl, importSunoUrl } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import type { SongMetadata } from "@/lib/api";
 
 export default function Home() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [sunoUrl, setSunoUrl] = useState<string | null>(null);
+  const [metadata, setMetadata] = useState<SongMetadata | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
+  const [isImportingSuno, setIsImportingSuno] = useState(false);
 
   // Poll job status if we have a jobId
   const { data: jobStatus } = useQuery({
@@ -21,6 +27,16 @@ export default function Home() {
       return data?.status === 'processing' ? 2000 : false;
     },
   });
+
+  // Update metadata from job status if available
+  useEffect(() => {
+    if (jobStatus?.metadata && !metadata) {
+      setMetadata(jobStatus.metadata);
+      if (jobStatus.metadata.audio_url && !audioUrl) {
+        setAudioUrl(jobStatus.metadata.audio_url);
+      }
+    }
+  }, [jobStatus, metadata, audioUrl]);
 
   // Show toast when job completes
   useEffect(() => {
@@ -37,13 +53,54 @@ export default function Home() {
 
   const handleFileSelect = (file: File) => {
     setAudioFile(file);
+    setAudioUrl(null);
+    setSunoUrl(null);
+    setMetadata(null);
     setJobId(null); // Reset job when new file is selected
     toast.success("Audio file loaded", {
       description: file.name,
     });
   };
 
+  const handleSunoUrlSubmit = async (url: string) => {
+    setIsImportingSuno(true);
+    try {
+      toast.loading("Importing from Suno...", { id: 'suno-import' });
+      const response = await importSunoUrl(url);
+      
+      setSunoUrl(url);
+      setMetadata(response.metadata);
+      setJobId(response.job_id);
+      setAudioFile(null);
+      
+      // If we have an audio URL from Suno, use it for playback
+      if (response.metadata.audio_url) {
+        setAudioUrl(response.metadata.audio_url);
+      }
+      
+      toast.success("Song imported!", {
+        id: 'suno-import',
+        description: "Video generation started",
+      });
+    } catch (error) {
+      toast.error("Import failed", {
+        id: 'suno-import',
+        description: error instanceof Error ? error.message : "Please check the URL and try again",
+      });
+    } finally {
+      setIsImportingSuno(false);
+    }
+  };
+
   const handleGenerate = async (startTime: number, endTime: number) => {
+    // If we already have a job from Suno import, don't upload again
+    if (jobId && sunoUrl) {
+      toast.info("Video generation already in progress", {
+        description: "This song is being processed from Suno",
+      });
+      return;
+    }
+
     if (!audioFile) return;
 
     try {
@@ -70,6 +127,7 @@ export default function Home() {
 
   const isGenerating = jobStatus?.status === 'processing';
   const isReady = jobStatus?.status === 'done';
+  const hasAudio = audioFile || audioUrl;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -96,15 +154,23 @@ export default function Home() {
 
         {/* Main Content */}
         <main className="space-y-3">
-          <DropZone 
+          <MediaInput
             onFileSelect={handleFileSelect}
+            onUrlSubmit={handleSunoUrlSubmit}
             hasFile={!!audioFile}
+            hasUrl={!!sunoUrl}
             fileName={audioFile?.name}
+            url={sunoUrl || undefined}
+            isLoading={isImportingSuno}
           />
 
-          {audioFile && (
+          {/* Song Metadata */}
+          {metadata && <SongMetadataComponent metadata={metadata} />}
+
+          {hasAudio && (
             <AudioPlayer
-              file={audioFile}
+              file={audioFile || undefined}
+              audioUrl={audioUrl || undefined}
               onGenerate={handleGenerate}
               isGenerating={isGenerating}
               jobStatus={jobStatus}
@@ -116,7 +182,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="mt-16 text-center">
           <p className="text-sm text-muted-foreground">
-            Supported formats: MP3, WAV, M4A, OGG
+            Upload an audio file or paste a Suno URL to get started
           </p>
         </footer>
       </div>

@@ -7,6 +7,19 @@ export interface UploadResponse {
 export interface JobStatus {
   status: 'processing' | 'done' | 'failed';
   error?: string;
+  metadata?: SongMetadata;
+}
+
+export interface SongMetadata {
+  description?: string;
+  tags?: string;
+  lyrics?: string;
+  audio_url?: string;
+}
+
+export interface SunoImportResponse {
+  job_id: string;
+  metadata: SongMetadata;
 }
 
 export async function uploadAudio(file: File): Promise<UploadResponse> {
@@ -37,4 +50,21 @@ export async function getJobStatus(jobId: string): Promise<JobStatus> {
 
 export function getDownloadUrl(jobId: string): string {
   return `${API_BASE_URL}/download/${jobId}`;
+}
+
+export async function importSunoUrl(url: string): Promise<SunoImportResponse> {
+  const response = await fetch(`${API_BASE_URL}/suno/import`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ url }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Failed to import Suno song');
+  }
+
+  return response.json();
 }
